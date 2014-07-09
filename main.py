@@ -119,34 +119,47 @@ class Game():
         # set pref fruit locations
         self.calculate_pref_fruit_with_attributes()
     
+    def find_least_needed(self, needed_fruits):
+        fruit_name = min(needed_fruits, key=needed_fruits.get)
+        if needed_fruits[fruit_name] != 0:
+            return fruit_name
+        needed_fruits.pop(fruit_name, None)
+        if needed_fruits:
+            return self.find_least_needed(needed_fruits)
+        else:
+            return self._find_any_leftover_fruit()
+    
     def calculate_pref_fruit_types(self):
         """ calculate the types of fruit we want """
         needed_fruits = self.needed_fruits.copy()
+        trace('needed fruits: ' + str(self.needed_fruits))
+        trace('num types needed: ' + str(self.num_types_needed))
         for i in range(self.num_types_needed):
-            try:
-                # TODO: available fruits????
-                fruit = min(needed_fruits, key=available_fruits.get)
-                if needed_fruits[fruit] == 0:
-                    needed_fruits.pop(fruit, None)
-                    continue
-            except:
-                # going to be a tie, no more prefs so pick any available fruit type
-                fruit = self._find_any_leftover_fruit()
-            self.pref_fruit_types.append(fruit)
+            self.pref_fruit_types.append(self.find_least_needed(needed_fruits))
     
     def calculate_pref_fruit_with_attributes(self):
         """ create list of fruit we possibly want with useful attributes """
+        trace('pref fruit types: ' + str(self.pref_fruit_types))
         fruit_positions = {}
         for x in range(self.width):
             for y in range(self.height):
+                if self.opponent_position == (x,y):
+                    continue
                 name = self.board[x][y]
                 if name in self.pref_fruit_types:
-                    if name in fruit_positions and self.opponent_position != (x,y):
+                    if name in fruit_positions:
                         fruit_positions[name].append((x,y))
                     else:
                         fruit_positions[name] = [(x,y)]
+        if not fruit_positions:
+            # will only happen if a draw and opponent currently on last fruit
+            # pick a location as nothing more we can do
+            self.fruit_locations.append([1, [(0,0)]])
         for fruit_type,locations in fruit_positions.iteritems():
-            self.fruit_locations.append([self.needed_fruits[fruit_type], locations])
+            needed = self.needed_fruits[fruit_type]
+            if needed == 0:
+                needed = 1
+            self.fruit_locations.append([needed, locations])
             
     ####
     # path calculation methods
@@ -177,7 +190,6 @@ class Game():
                 return
 
     def fruit_combinations(self, items, n):
-        trace('starting fruit combinations')
         if n==0: yield []
         else:
             for i in xrange(len(items)):
@@ -206,12 +218,14 @@ class Game():
 
     def unique_fruit_combinations(self, fruit):
         trace('starting unique fruit combinations')
+        trace('fruit ' + str(fruit))
         fruit_list = []
         for i in range(len(fruit)):
             current_list = []
             for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
                 current_list.append(coords)
             fruit_list.append(current_list)  
+        trace('fruit list ' + str(fruit_list))
         return self.gen_unique_fruit_combinations(fruit_list)
 
     def different_paths(self):
