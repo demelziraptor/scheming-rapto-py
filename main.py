@@ -263,6 +263,11 @@ class Game():
                     if total_distance < min_distance:
                         min_distance = total_distance
                         min_path = path
+                    if total_distance == min_distance:
+                        if (self._distance(path[0], self.current_position) > 
+                                self._distance(min_path[0], self.current_position)):
+                            min_distance = total_distance
+                            min_path = path
         trace('let\'s go ' + str(min_path) + ' distance ' + str(min_distance))
         return min_path
         
