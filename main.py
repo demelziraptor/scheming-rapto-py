@@ -30,6 +30,7 @@ class Game():
         # preferences for next move
         self.pref_fruit_types = []   # list of types of fruit going to try and get
         self.pref_fruit_with_attributes = []   # all fruit looking at with  additional data
+        self.fruit_locations = []
         
         # next move
         self.dinner_location = (0,0)
@@ -87,7 +88,7 @@ class Game():
                 return True
         return False
     
-    def calculate_dinner_location(self):
+    def calculate_dinner_location2(self):
         dinner = {
             'name': '', 
             'position': (0,0), 
@@ -132,7 +133,7 @@ class Game():
         # reset preferences
         self.pref_fruit_types = []
         self.pref_fruit_with_attributes = []
-        self.fruit_positions = []
+        self.fruit_locations = []
         # set pref fruit types
         self.calculate_pref_fruit_types()
         # set pref fruit locations
@@ -160,12 +161,12 @@ class Game():
             for y in range(self.height):
                 name = self.board[x][y]
                 if name in self.pref_fruit_types:
-                    if name in fruits:
+                    if name in fruit_positions:
                         fruit_positions[name].append((x,y))
                     else:
                         fruit_positions[name] = [(x,y)]
         for fruit_type,locations in fruit_positions.iteritems():
-            self.fruit_locations.append(self.fruits_needed[fruit_type], locations)
+            self.fruit_locations.append([self.needed_fruits[fruit_type], locations])
             
     ####
     # path calculation methods
@@ -197,13 +198,13 @@ class Game():
         if n==0: yield []
         else:
             for i in xrange(len(items)):
-                for cc in fruit_combinations(items[i+1:],n-1):
+                for cc in self.fruit_combinations(items[i+1:],n-1):
                     yield [items[i]]+cc
 
     def gen_unique_fruit_combinations(self, fruit_list, current=False):
         if not current:
             for i in fruit_list[0]:
-                yield gen_unique_fruit_combinations(fruit_list[1:], i)
+                yield self.gen_unique_fruit_combinations(fruit_list[1:], i)
         else:
             if len(fruit_list) == 1:
                 for i in fruit_list[0]:
@@ -211,29 +212,29 @@ class Game():
             else:
                 for i in fruit_list[0]:
                     tmp = current + i
-                    for val in gen_unique_fruit_combinations(fruit_list[1:], tmp):
+                    for val in self.gen_unique_fruit_combinations(fruit_list[1:], tmp):
                         yield val
 
     def unique_fruit_combinations(self, fruit):
         fruit_list = []
         for i in range(len(fruit)):
             current_list = []
-            for coords in fruit_combinations(fruit[i][1], fruit[i][0]):
+            for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
                 current_list.append(coords)
             fruit_list.append(current_list)  
-        return gen_unique_fruit_combinations(fruit_list)
+        return self.gen_unique_fruit_combinations(fruit_list)
 
-    def different_paths(self, fruit, my_position):
+    def different_paths(self):
         min_distance = 0
         min_path = []
-        for x in unique_fruit_combinations(fruit):
+        for x in self.unique_fruit_combinations(self.fruit_locations):
             for y in x:
-                paths = path_permutations(y)
+                paths = self.path_permutations(y)
                 for path in paths:
                     total_distance = 0
-                    current_position = my_position
+                    current_position = self.current_position
                     for coord in path:
-                        total_distance += distance(current_position, coord)
+                        total_distance += self._distance(current_position, coord)
                         current_position = coord
                     if not min_distance:
                         min_distance = total_distance
@@ -242,8 +243,11 @@ class Game():
                         if total_distance < min_distance:
                             min_distance = total_distance
                             min_path = path
-        print 'let\'s go', min_path, 'distance', min_distance
+        trace('let\'s go ' + str(min_path) + ' distance ' + str(min_distance))
         return min_path
+        
+    def calculate_dinner_location(self):
+        self.dinner_location = self.different_paths()[0]
     
     
     ####
