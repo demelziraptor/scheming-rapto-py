@@ -72,15 +72,34 @@ def our_options(fruit):
         fruit_list.append(current_list)  
     return unique_fruits(fruit_list)
     
-def different_paths(fruit):
+def distance(p0, p1):
+    """ difference in x + difference in y to calculate distance """
+    return abs(p0[0] - p1[0]) + abs(p0[1] - p1[1])
+
+def different_paths(fruit, my_position):
+    min_distance = 0
+    min_path = []
     for x in our_options(fruit):
         for y in x:
             perms = permutations(y)
             for perm in perms:
-                print perm
+                total_distance = 0
+                current_position = my_position
+                for coord in perm:
+                    total_distance += distance(current_position, coord)
+                    current_position = coord
+                if not min_distance:
+                    min_distance = total_distance
+                    min_path = perm
+                else:
+                    if total_distance < min_distance:
+                        min_distance = total_distance
+                        min_path = perm
+    print 'min distance', min_distance
+    print 'min path', min_path
     
 
-different_paths(fruit35)
+different_paths(fruit35, (0,0))
 
 
 
