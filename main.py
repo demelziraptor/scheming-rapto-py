@@ -99,8 +99,8 @@ class Game():
                 self.num_types_won += 1
             # count if opponent has almost won a type
             if self._one_fruit_left_to_win(fruit_name, opponent):
-                additional_types_needed = 1
-                #pass
+                #additional_types_needed = 1
+                pass
             # set needed fruit
             if (mine >= self.targets[fruit_name] or opponent >= self.targets[fruit_name] or 
                     not available or self._opponent_about_to_win_type(fruit_name, opponent)):
@@ -187,9 +187,13 @@ class Game():
     def gen_unique_fruit_combinations(self, fruit_list, current=False):
         trace('starting gen unique fruit combinations')
         if not current:
-            for i in fruit_list[0]:
-                for val in self.gen_unique_fruit_combinations(fruit_list[1:], i):
-                    yield val
+            if len(fruit_list) == 1:
+                for i in fruit_list[0]:
+                    yield i
+            else:
+                for i in fruit_list[0]:
+                    for val in self.gen_unique_fruit_combinations(fruit_list[1:], i):
+                        yield val
         else:
             if len(fruit_list) == 1:
                 for i in fruit_list[0]:

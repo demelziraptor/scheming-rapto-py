@@ -18,6 +18,10 @@ fruit4 = ((1, ((2,3),)),
           
 fruit = ((1, ((2,3),)), 
           (2, ((3,3), (6,2), (5,5))))
+        
+fruit1 = ((1, ((2,3),)))
+          
+fruit15 = ((2, ((3,3), (6,2), (5,5))),)
           
 my_position = (7,7)
 
@@ -54,11 +58,16 @@ def fruit_combinations(items, n):
 
 def gen_unique_fruit_combinations(fruit_list, current=False):
     """ for all coords, all possible combinations """
+    print 'current', current, 'fruit list', fruit_list
     if not current:
-        for i in fruit_list[0]:
-            #yield gen_unique_fruit_combinations(fruit_list[1:], i)
-            for val in gen_unique_fruit_combinations(fruit_list[1:], i):
-                yield val
+        print 'length', len(fruit_list)
+        if len(fruit_list) == 1:
+            for i in fruit_list[0]:
+                yield i
+        else:
+          for i in fruit_list[0]:
+              for val in gen_unique_fruit_combinations(fruit_list[1:], i):
+                  yield val
     else:
         if len(fruit_list) == 1:
             for i in fruit_list[0]:
@@ -103,7 +112,7 @@ def different_paths(fruit, my_position):
     print 'let\'s go', min_path, 'distance', min_distance
     return min_path
 
-if different_paths(fruit35, my_position)[0] == my_position:
+if different_paths(fruit15, my_position)[0] == my_position:
     print 'TAKE'
 else:
     print 'move somewhere'
