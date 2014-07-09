@@ -120,13 +120,16 @@ class Game():
         self.calculate_pref_fruit_with_attributes()
     
     def find_least_needed(self, needed_fruits):
+        trace('this round needed ' + str(needed_fruits))
         fruit_name = min(needed_fruits, key=needed_fruits.get)
-        if needed_fruits[fruit_name] != 0:
+        if needed_fruits[fruit_name] != 0 and fruit_name not in self.pref_fruit_types:
             return fruit_name
         needed_fruits.pop(fruit_name, None)
         if needed_fruits:
+            trace('need more fruits')
             return self.find_least_needed(needed_fruits)
         else:
+            trace('no more fruits, find leftover')
             return self._find_any_leftover_fruit()
     
     def calculate_pref_fruit_types(self):
@@ -159,7 +162,7 @@ class Game():
             needed = self.needed_fruits[fruit_type]
             if needed == 0:
                 needed = 1
-            self.fruit_locations.append([needed, locations])
+            self.fruit_locations.append([int(round(needed)), locations])
             
     ####
     # path calculation methods
