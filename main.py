@@ -99,8 +99,8 @@ class Game():
                 self.num_types_won += 1
             # count if opponent has almost won a type
             if self._one_fruit_left_to_win(fruit_name, opponent):
-                #additional_types_needed = 1
-                pass
+                additional_types_needed = 1
+                #pass
             # set needed fruit
             if (mine >= self.targets[fruit_name] or opponent >= self.targets[fruit_name] or 
                     not available or self._opponent_about_to_win_type(fruit_name, opponent)):
@@ -141,7 +141,7 @@ class Game():
             for y in range(self.height):
                 name = self.board[x][y]
                 if name in self.pref_fruit_types:
-                    if name in fruit_positions and self.opponent_location != (x,y):
+                    if name in fruit_positions and self.opponent_position != (x,y):
                         fruit_positions[name].append((x,y))
                     else:
                         fruit_positions[name] = [(x,y)]
@@ -188,7 +188,8 @@ class Game():
         trace('starting gen unique fruit combinations')
         if not current:
             for i in fruit_list[0]:
-                yield self.gen_unique_fruit_combinations(fruit_list[1:], i)
+                for val in self.gen_unique_fruit_combinations(fruit_list[1:], i):
+                    yield val
         else:
             if len(fruit_list) == 1:
                 for i in fruit_list[0]:
@@ -210,25 +211,25 @@ class Game():
         return self.gen_unique_fruit_combinations(fruit_list)
 
     def different_paths(self):
+        """ finds all possible paths and calculates minimum """
         trace('starting different paths')
         min_distance = 0
         min_path = []
-        for x in self.unique_fruit_combinations(self.fruit_locations):
-            for y in x:
-                paths = self.path_permutations(y)
-                for path in paths:
-                    total_distance = 0
-                    current_position = self.current_position
-                    for coord in path:
-                        total_distance += self._distance(current_position, coord)
-                        current_position = coord
-                    if not min_distance:
+        for y in self.unique_fruit_combinations(self.fruit_locations):
+            paths = self.path_permutations(y)
+            for path in paths:
+                total_distance = 0
+                current_position = self.current_position
+                for coord in path:
+                    total_distance += self._distance(current_position, coord)
+                    current_position = coord
+                if not min_distance:
+                    min_distance = total_distance
+                    min_path = path
+                else:
+                    if total_distance < min_distance:
                         min_distance = total_distance
                         min_path = path
-                    else:
-                        if total_distance < min_distance:
-                            min_distance = total_distance
-                            min_path = path
         trace('let\'s go ' + str(min_path) + ' distance ' + str(min_distance))
         return min_path
         

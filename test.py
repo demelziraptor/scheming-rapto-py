@@ -45,6 +45,7 @@ def path_permutations(iterable, r=None):
             return
 
 def fruit_combinations(items, n):
+    """ give coords for one type of fruit and num needed, returns possible combinations """
     if n==0: yield []
     else:
         for i in xrange(len(items)):
@@ -52,9 +53,12 @@ def fruit_combinations(items, n):
                 yield [items[i]]+cc
 
 def gen_unique_fruit_combinations(fruit_list, current=False):
+    """ for all coords, all possible combinations """
     if not current:
         for i in fruit_list[0]:
-            yield gen_unique_fruit_combinations(fruit_list[1:], i)
+            #yield gen_unique_fruit_combinations(fruit_list[1:], i)
+            for val in gen_unique_fruit_combinations(fruit_list[1:], i):
+                yield val
     else:
         if len(fruit_list) == 1:
             for i in fruit_list[0]:
@@ -66,6 +70,7 @@ def gen_unique_fruit_combinations(fruit_list, current=False):
                     yield val
 
 def unique_fruit_combinations(fruit):
+    """ for each type of fruit, get combinations, then for all, get combinations """
     fruit_list = []
     for i in range(len(fruit)):
         current_list = []
@@ -80,22 +85,21 @@ def distance(p0, p1):
 def different_paths(fruit, my_position):
     min_distance = 0
     min_path = []
-    for x in unique_fruit_combinations(fruit):
-        for y in x:
-            paths = path_permutations(y)
-            for path in paths:
-                total_distance = 0
-                current_position = my_position
-                for coord in path:
-                    total_distance += distance(current_position, coord)
-                    current_position = coord
-                if not min_distance:
+    for y in unique_fruit_combinations(fruit):
+        paths = path_permutations(y)
+        for path in paths:
+            total_distance = 0
+            current_position = my_position
+            for coord in path:
+                total_distance += distance(current_position, coord)
+                current_position = coord
+            if not min_distance:
+                min_distance = total_distance
+                min_path = path
+            else:
+                if total_distance < min_distance:
                     min_distance = total_distance
                     min_path = path
-                else:
-                    if total_distance < min_distance:
-                        min_distance = total_distance
-                        min_path = path
     print 'let\'s go', min_path, 'distance', min_distance
     return min_path
 
