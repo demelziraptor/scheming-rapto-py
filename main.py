@@ -22,6 +22,7 @@ class Game():
         self.needed_fruits = {}   # how much of each type of fruit need to get
         self.available_fruits = {}   # how much of each type still on the board
         self.num_types_needed = 0   # how many types of fruit left to win
+        self.num_types_available = 0
         self.num_types_won = 0   # how many types of fruit already won
         
         # preferences for next move
@@ -87,6 +88,7 @@ class Game():
     def calculate_game_state(self):
         """ calculates fruits available, fruits needed, and number of fruit types needed """
         self.num_types_won = 0
+        self.num_types_available = 0
         additional_types_needed = 0
         for fruit_name,fruit_total in self.fruits.iteritems():
             mine = get_my_item_count(fruit_name)
@@ -94,6 +96,8 @@ class Game():
             available = fruit_total - mine - opponent
             # set available fruit
             self.available_fruits[fruit_name] = available
+            if available:
+                self.num_types_available += 1
             # count if I've won this type
             if mine >= self.targets[fruit_name]:
                 self.num_types_won += 1
@@ -137,6 +141,9 @@ class Game():
         needed_fruits = self.needed_fruits.copy()
         trace('needed fruits: ' + str(self.needed_fruits))
         trace('num types needed: ' + str(self.num_types_needed))
+        num_types = self.num_types_needed
+        if num_types > self.num_types_available:
+            num_types = self.num_types_available
         for i in range(self.num_types_needed):
             self.pref_fruit_types.append(self.find_least_needed(needed_fruits))
     
@@ -162,6 +169,11 @@ class Game():
             needed = self.needed_fruits[fruit_type]
             if needed == 0:
                 needed = 1
+            if needed > self.available_fruits[fruit_type]:
+                needed = self.available_fruits[fruit_type]
+            # monkeypatch timeout
+            if needed > 3:
+                needed = 3
             self.fruit_locations.append([int(round(needed)), locations])
             
     ####
