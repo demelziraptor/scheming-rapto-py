@@ -22,12 +22,12 @@ class Game():
         self.needed_fruits = {}   # how much of each type of fruit need to get
         self.available_fruits = {}   # how much of each type still on the board
         self.num_types_needed = 0   # how many types of fruit left to win
-        self.num_types_available = 0
+        self.num_types_available = 0    # how many types left on the board
         self.num_types_won = 0   # how many types of fruit already won
         
         # preferences for next move
         self.pref_fruit_types = []   # list of types of fruit going to try and get
-        self.fruit_locations = []
+        self.fruit_locations = []    # list of fruit locations going to try and get
         
         # next move
         self.dinner_location = (0,0)
@@ -76,6 +76,7 @@ class Game():
         return self.next_move
     
     def can_take_fruit(self):
+        """ takes fruit if possible """
         if self.dinner_location and self.current_position == self.dinner_location:
             x,y = self.current_position
             if self.board[x][y] > 0:
@@ -104,7 +105,6 @@ class Game():
             # count if opponent has almost won a type
             if self._one_fruit_left_to_win(fruit_name, opponent):
                 additional_types_needed = 1
-                #pass
             # set needed fruit
             if (mine >= self.targets[fruit_name] or opponent >= self.targets[fruit_name] or 
                     not available or self._opponent_about_to_win_type(fruit_name, opponent)):
@@ -121,23 +121,17 @@ class Game():
         # set pref fruit types
         self.calculate_pref_fruit_types()
         # set pref fruit locations
-        self.calculate_pref_fruit_with_attributes()
+        self.calculate_fruit_locations()
     
     def find_least_needed(self, needed_fruits):
-        trace('needed fruits ' + str(needed_fruits))
-        try:
-            fruit_name = min(needed_fruits, key=needed_fruits.get)
-        except:
+        """ return name of fruit with least needed """
+        if not needed_fruits:
             return self._find_any_leftover_fruit()
+        fruit_name = min(needed_fruits, key=needed_fruits.get)
         if needed_fruits[fruit_name] != 0 and fruit_name not in self.pref_fruit_types:
             return fruit_name
         needed_fruits.pop(fruit_name, None)
-        trace('needed fruits after pop ' + str(needed_fruits) + ' len ' + str(len(needed_fruits)))
-        # don't know why, if needed_fruits not working
-        if len(needed_fruits) != 0:
-            return self.find_least_needed(needed_fruits)
-        else:
-            return self._find_any_leftover_fruit()
+        return self.find_least_needed(needed_fruits)
     
     def calculate_pref_fruit_types(self):
         """ calculate the types of fruit we want """
@@ -148,18 +142,20 @@ class Game():
         num_types = self.num_types_needed
         if num_types > self.num_types_available:
             num_types = self.num_types_available
+        # monkeypatch timeout - max number of fruit types
         if num_types > 3:
             num_types = 3
         for i in range(num_types):
             self.pref_fruit_types.append(self.find_least_needed(needed_fruits))
     
-    def calculate_pref_fruit_with_attributes(self):
-        """ create list of fruit we possibly want with useful attributes """
+    def calculate_fruit_locations(self):
+        """ create list of fruit locations we want and organise with number needed """
         trace('pref fruit types: ' + str(self.pref_fruit_types))
         fruit_positions = {}
         for x in range(self.width):
             for y in range(self.height):
                 name = self.board[x][y]
+                # assume opponent will take fruit if he's sitting on it
                 if self.opponent_position == (x,y):
                     if name in self.available_fruits:
                         self.available_fruits[name] = self.available_fruits[name] -1
@@ -189,7 +185,7 @@ class Game():
     # path calculation methods
     ####
     def timeout_monkeypatch(self, needed, locations, max_locations):
-        trace('max locations start ' + str(max_locations))
+        """ cut down number of locations to consider to prevent timeout """
         num_locations = 5
         if len(locations) > max_locations:
             num_locations = max_locations
@@ -200,10 +196,10 @@ class Game():
         if needed > len(cut_locations):
             needed = len(cut_locations)
         trace('monkeypatch locations ' + str(locations) + ' to ' + str(cut_locations))
-        trace('max locations end ' + str(max_locations))
         return (needed, cut_locations, max_locations)
     
     def path_permutations(self, iterable, r=None):
+        """ generator returns all possible paths of given coordinates """
         pool = tuple(iterable)
         n = len(pool)
         r = n if r is None else r
@@ -227,6 +223,7 @@ class Game():
                 return
 
     def fruit_combinations(self, items, n):
+        """ generator returns possible combinations for a list of coordinates and num required"""
         if n==0: yield []
         else:
             for i in xrange(len(items)):
@@ -234,6 +231,7 @@ class Game():
                     yield [items[i]]+cc
 
     def gen_unique_fruit_combinations(self, fruit_list, current=False):
+        """ generator returns unique combinations for a list containing lists of coords """"
         if not current:
             if len(fruit_list) == 1:
                 for i in fruit_list[0]:
@@ -248,11 +246,11 @@ class Game():
                     yield current + i
             else:
                 for i in fruit_list[0]:
-                    tmp = current + i
-                    for val in self.gen_unique_fruit_combinations(fruit_list[1:], tmp):
+                    for val in self.gen_unique_fruit_combinations(fruit_list[1:], current + i):
                         yield val
 
     def unique_fruit_combinations(self, fruit):
+        """ gets possible combinations for type of fruit, then combines to create coord combinations """
         trace('fruit ' + str(fruit))
         fruit_list = []
         for i in range(len(fruit)):
@@ -297,35 +295,6 @@ class Game():
     ####
     # helper methods
     ####
-    def _max_num_nearby_positions(self, area):
-        """ assuming no board edges, maximum number of nearby positions """
-        max_per_distance = {}
-        for i in range(area):
-            max_per_distance[i+1] = (i+1) * 4
-        return max_per_distance
-    
-    def _num_nearby_positions(self, position, area):
-        """ returns dict with distance and count of valid positions """
-        nearby = {}
-        for x in range(position[0] - area, position[0] + area + 1):
-            for y in range(position[1] - area, position[1] + area + 1):
-                distance = self._distance(position, (x,y))
-                if ((x < 0 or y < 0) or (x,y) == position or
-                   (x >= self.width or y >= self.height) or distance > area):
-                    continue
-                if distance not in nearby:
-                    nearby[distance] = 0
-                nearby[distance] += 1    
-    
-    def _nearby_positions(self, position, area):
-        """ generator to calculate nearby valid positions """
-        for x in range(position[0] - area, position[0] + area + 1):
-            for y in range(position[1] - area, position[1] + area + 1):
-                if (x < 0 or y < 0) or (x,y) == position or (x >= self.width or y >= self.height):
-                    continue
-                if abs(position[0] - x) + abs(position[1] - y) > area:
-                    continue
-                yield (x,y) 
     
     def _opponent_about_to_win_type(self, fruit_name, count):
         """ returns true if opponent can take the fruit on their next go and win this type """
