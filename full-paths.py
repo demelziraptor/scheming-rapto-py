@@ -108,8 +108,9 @@ class Game():
             self.coord_list = coords_by_available
         trace(str(self.coord_list))
         
-    def path_permutations(self, iterable, r=None):
-        """ generator returns all possible paths of given coordinates """
+    def path_permutations(self, generator, r=None):
+        """ given a set of unique coordinates, returns all possible permutations of those coordinates """
+        iterable = list(generator)
         pool = tuple(iterable)
         n = len(pool)
         r = n if r is None else r
@@ -119,7 +120,7 @@ class Game():
         cycles = range(n, n-r, -1)
         yield tuple(pool[i] for i in indices[:r])
         while n:
-            for i in reversed(range(r)):
+            for i in reversed(xrange(r)):
                 cycles[i] -= 1
                 if cycles[i] == 0:
                     indices[i:] = indices[i+1:] + indices[i:i+1]
@@ -162,34 +163,39 @@ class Game():
     def unique_fruit_combinations(self, fruit):
         """ returns a list of unique sets of coordinates for each type of fruit """
         fruit_list = []
-        for i in range(len(fruit)):
-            current_list = []
-            for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
-                current_list.append(coords)
-            fruit_list.append(current_list)
-        if self.num_types_needed > len(fruit_list):
-            self.num_types_needed = len(fruit_list)
-        all_lists = []
+        num_fruit = len(fruit)
+        for i in xrange(num_fruit):
+            fruit_list.append(list(self.fruit_combinations(fruit[i][1], fruit[i][0])))
+        if self.num_types_needed > num_fruit:
+            self.num_types_needed = num_fruit
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
-            for option in self.gen_unique_fruit_combinations(group_option):
-                all_lists.append(option)
-                print str(option)
-        return all_lists
+            yield self.gen_unique_fruit_combinations(group_option).next()
 
+    def path_distance(self, start, path):
+        """ abs is slow, use if statements instead """
+        total_distance = 0
+        pos = start
+        for coord in path:
+            if pos[0] > coord[0]:
+                total_distance += pos[0] - coord[0]
+            else:
+                total_distance += coord[0] - pos[0]
+            if pos[1] > coord[1]:
+                total_distance += pos[1] - coord[1]
+            else:
+                total_distance += coord[1] - pos[1]
+            pos = coord
+        return total_distance
+    
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
+        local_abs = abs
         for y in self.unique_fruit_combinations(self.coord_list):
-            #exit(0)
-            paths = self.path_permutations(y)
-            for path in paths:
+            for path in self.path_permutations(y):
                 num_fruit_in_path = len(path)
-                total_distance = 0
-                current_position = self.current_position
-                for coord in path:
-                    total_distance += self._distance(current_position, coord)
-                    current_position = coord
+                total_distance = self.path_distance(self.current_position, path)
                 total_distance += num_fruit_in_path
                 if not min_distance:
                     min_distance = total_distance
@@ -199,8 +205,8 @@ class Game():
                         min_distance = total_distance
                         min_path = path
                     if total_distance == min_distance:
-                        if (self._distance(path[0], self.current_position) > 
-                                self._distance(min_path[0], self.current_position)):
+                        if (local_abs(self.current_position[0] - path[0][0]) + local_abs(self.current_position[1] - path[0][1]) > 
+                                local_abs(self.current_position[0] - min_path[0][0]) + local_abs(self.current_position[1] - min_path[0][1])):
                             min_distance = total_distance
                             min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)

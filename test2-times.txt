@@ -1,24 +1,24 @@
-0.012
-         2763 function calls (2676 primitive calls) in 0.016 seconds
+0.008
+         1485 function calls (1398 primitive calls) in 0.008 seconds
 
    Ordered by: standard name
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-     1428    0.004    0.000    0.004    0.000 :0(abs)
         3    0.000    0.000    0.000    0.000 :0(append)
       185    0.000    0.000    0.000    0.000 :0(len)
         6    0.000    0.000    0.000    0.000 :0(range)
-        1    0.004    0.004    0.004    0.004 :0(setprofile)
-        1    0.000    0.000    0.012    0.012 <string>:1(<module>)
-        1    0.000    0.000    0.016    0.016 profile:0(TestPaths())
+        1    0.000    0.000    0.000    0.000 :0(setprofile)
+        1    0.000    0.000    0.008    0.008 <string>:1(<module>)
+        1    0.000    0.000    0.008    0.008 profile:0(TestPaths())
         0    0.000             0.000          profile:0(profiler)
-        1    0.000    0.000    0.012    0.012 test2.py:106(calculate_dinner_location)
-      153    0.000    0.000    0.004    0.000 test2.py:14(path_permutations)
+        1    0.000    0.000    0.008    0.008 test2.py:101(different_paths)
+        1    0.000    0.000    0.008    0.008 test2.py:131(calculate_dinner_location)
+      153    0.008    0.000    0.008    0.000 test2.py:14(path_permutations)
        15    0.000    0.000    0.000    0.000 test2.py:24(<genexpr>)
-      849    0.004    0.000    0.004    0.000 test2.py:34(<genexpr>)
+      849    0.000    0.000    0.000    0.000 test2.py:34(<genexpr>)
    102/21    0.000    0.000    0.000    0.000 test2.py:39(fruit_combinations)
      12/6    0.000    0.000    0.000    0.000 test2.py:47(gen_unique_fruit_combinations)
-        1    0.000    0.000    0.012    0.012 test2.py:5(__init__)
+        1    0.000    0.000    0.008    0.008 test2.py:5(__init__)
         4    0.000    0.000    0.000    0.000 test2.py:66(unique_fruit_combinations)
-        1    0.004    0.004    0.012    0.012 test2.py:77(different_paths)
+      150    0.000    0.000    0.000    0.000 test2.py:86(path_distance)
 
