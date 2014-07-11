@@ -11,8 +11,9 @@ class TestPaths():
         self.calculate_dinner_location()
         print self.dinner_location
 
-    def path_permutations(self, iterable, r=None):
+    def path_permutations(self, generator, r=None):
         """ given a set of unique coordinates, returns all possible permutations of those coordinates """
+        iterable = list(generator)
         pool = tuple(iterable)
         n = len(pool)
         r = n if r is None else r
@@ -71,8 +72,7 @@ class TestPaths():
         if self.num_types_needed > num_fruit:
             self.num_types_needed = num_fruit
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
-            for val in self.gen_unique_fruit_combinations(group_option):
-                yield val
+            yield self.gen_unique_fruit_combinations(group_option).next()
     
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
@@ -80,8 +80,7 @@ class TestPaths():
         min_path = []
         local_abs = abs
         for y in self.unique_fruit_combinations(self.coord_list):
-            paths = self.path_permutations(y)
-            for path in paths:
+            for path in self.path_permutations(y):
                 num_fruit_in_path = len(path)
                 total_distance = 0
                 current_position = self.current_position

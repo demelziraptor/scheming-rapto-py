@@ -1,25 +1,24 @@
-0.24 - 0.31
-         69075 function calls (68946 primitive calls) in 0.268 seconds
+0.012
+         2763 function calls (2676 primitive calls) in 0.016 seconds
 
    Ordered by: standard name
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-    38032    0.080    0.000    0.080    0.000 :0(abs)
+     1428    0.004    0.000    0.004    0.000 :0(abs)
         3    0.000    0.000    0.000    0.000 :0(append)
-     3935    0.000    0.000    0.000    0.000 :0(len)
-       86    0.000    0.000    0.000    0.000 :0(range)
-        1    0.000    0.000    0.000    0.000 :0(setprofile)
-        1    0.000    0.000    0.268    0.268 <string>:1(<module>)
-        1    0.000    0.000    0.268    0.268 profile:0(TestPaths())
+      185    0.000    0.000    0.000    0.000 :0(len)
+        6    0.000    0.000    0.000    0.000 :0(range)
+        1    0.004    0.004    0.004    0.004 :0(setprofile)
+        1    0.000    0.000    0.012    0.012 <string>:1(<module>)
+        1    0.000    0.000    0.016    0.016 profile:0(TestPaths())
         0    0.000             0.000          profile:0(profiler)
-        1    0.000    0.000    0.268    0.268 test2.py:107(calculate_dinner_location)
-     3901    0.072    0.000    0.116    0.000 test2.py:14(path_permutations)
-      242    0.000    0.000    0.000    0.000 test2.py:23(<genexpr>)
-    22630    0.044    0.000    0.044    0.000 test2.py:33(<genexpr>)
-   102/21    0.000    0.000    0.000    0.000 test2.py:38(fruit_combinations)
-    94/46    0.000    0.000    0.000    0.000 test2.py:46(gen_unique_fruit_combinations)
-        1    0.000    0.000    0.268    0.268 test2.py:5(__init__)
-       44    0.000    0.000    0.000    0.000 test2.py:65(unique_fruit_combinations)
-        1    0.072    0.072    0.268    0.268 test2.py:77(different_paths)
-
+        1    0.000    0.000    0.012    0.012 test2.py:106(calculate_dinner_location)
+      153    0.000    0.000    0.004    0.000 test2.py:14(path_permutations)
+       15    0.000    0.000    0.000    0.000 test2.py:24(<genexpr>)
+      849    0.004    0.000    0.004    0.000 test2.py:34(<genexpr>)
+   102/21    0.000    0.000    0.000    0.000 test2.py:39(fruit_combinations)
+     12/6    0.000    0.000    0.000    0.000 test2.py:47(gen_unique_fruit_combinations)
+        1    0.000    0.000    0.012    0.012 test2.py:5(__init__)
+        4    0.000    0.000    0.000    0.000 test2.py:66(unique_fruit_combinations)
+        1    0.004    0.004    0.012    0.012 test2.py:77(different_paths)
 
