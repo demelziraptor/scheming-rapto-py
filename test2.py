@@ -22,7 +22,7 @@ class TestPaths():
         cycles = range(n, n-r, -1)
         yield tuple(pool[i] for i in indices[:r])
         while n:
-            for i in reversed(range(r)):
+            for i in reversed(xrange(r)):
                 cycles[i] -= 1
                 if cycles[i] == 0:
                     indices[i:] = indices[i+1:] + indices[i:i+1]
@@ -65,7 +65,7 @@ class TestPaths():
     def unique_fruit_combinations(self, fruit):
         """ returns a list of unique sets of coordinates for each type of fruit """
         fruit_list = []
-        for i in range(len(fruit)):
+        for i in xrange(len(fruit)):
             current_list = []
             for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
                 current_list.append(coords)
@@ -102,8 +102,8 @@ class TestPaths():
                         min_distance = total_distance
                         min_path = path
                     if total_distance == min_distance:
-                        if (self._distance(path[0], self.current_position) > 
-                                self._distance(min_path[0], self.current_position)):
+                        if (local_abs(self.current_position[0] - path[0][0]) + local_abs(self.current_position[1] - path[0][1]) > 
+                                local_abs(self.current_position[0] - min_path[0][0]) + local_abs(self.current_position[1] - min_path[0][1])):
                             min_distance = total_distance
                             min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)
@@ -111,10 +111,6 @@ class TestPaths():
         
     def calculate_dinner_location(self):
         self.dinner_location = self.different_paths()[0]
-        
-    def _distance(self, p0, p1):
-        """ difference in x + difference in y to calculate distance """
-        return abs(p0[0] - p1[0]) + abs(p0[1] - p1[1])
         
 
 
