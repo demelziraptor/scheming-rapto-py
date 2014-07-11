@@ -65,20 +65,15 @@ class TestPaths():
     def unique_fruit_combinations(self, fruit):
         """ returns a list of unique sets of coordinates for each type of fruit """
         fruit_list = []
-        for i in xrange(len(fruit)):
-            current_list = []
-            for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
-                current_list.append(coords)
-            fruit_list.append(current_list)
-        if self.num_types_needed > len(fruit_list):
-            self.num_types_needed = len(fruit_list)
-        all_lists = []
+        num_fruit = len(fruit)
+        for i in xrange(num_fruit):
+            fruit_list.append(list(self.fruit_combinations(fruit[i][1], fruit[i][0])))
+        if self.num_types_needed > num_fruit:
+            self.num_types_needed = num_fruit
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
-            for option in self.gen_unique_fruit_combinations(group_option):
-                all_lists.append(option)
-                #print str(option)
-        return all_lists
-
+            for val in self.gen_unique_fruit_combinations(group_option):
+                yield val
+    
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
