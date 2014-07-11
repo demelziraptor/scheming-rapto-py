@@ -16,6 +16,7 @@ class Game():
         self.board = []
         self.current_position = (0,0)
         self.opponent_position = (0,0)
+        self.num_types_needed = 0
         
         # coordinates considered for next move
         self.coord_list = []
@@ -76,6 +77,8 @@ class Game():
         """ returns number of fruit needed if can win that type, or 0 otherwise """
         have = get_my_item_count(fruit)
         needed = self.targets[fruit] - have
+        if needed <= 0:
+            self.num_types_needed -= 1
         if needed > 0 and needed <= available:
             return int(round(needed))
         return 0
@@ -83,6 +86,7 @@ class Game():
     def calculate_coord_list(self):
         """ generate list of coords """
         self.coord_list = []
+        self.num_types_needed = self.num_types_to_win
         coords_by_type = {}
         coords_by_available = []
         for x in range(self.width):
