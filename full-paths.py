@@ -160,27 +160,37 @@ class Game():
                         yield val
 
     def unique_fruit_combinations(self, fruit):
-        """ gets possible combinations for type of fruit, then combines to create coord combinations """
+        """ returns a list of unique sets of coordinates for each type of fruit """
         fruit_list = []
         for i in range(len(fruit)):
             current_list = []
             for coords in self.fruit_combinations(fruit[i][1], fruit[i][0]):
                 current_list.append(coords)
             fruit_list.append(current_list)
-        return self.gen_unique_fruit_combinations(fruit_list)
+        if self.num_types_needed > len(fruit_list):
+            self.num_types_needed = len(fruit_list)
+        all_lists = []
+        for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
+            for option in self.gen_unique_fruit_combinations(group_option):
+                all_lists.append(option)
+                print str(option)
+        return all_lists
 
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
         for y in self.unique_fruit_combinations(self.coord_list):
+            #exit(0)
             paths = self.path_permutations(y)
             for path in paths:
+                num_fruit_in_path = len(path)
                 total_distance = 0
                 current_position = self.current_position
                 for coord in path:
                     total_distance += self._distance(current_position, coord)
                     current_position = coord
+                total_distance += num_fruit_in_path
                 if not min_distance:
                     min_distance = total_distance
                     min_path = path
