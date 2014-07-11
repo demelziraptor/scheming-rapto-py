@@ -83,6 +83,7 @@ class TestPaths():
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
+        local_abs = abs
         for y in self.unique_fruit_combinations(self.coord_list):
             paths = self.path_permutations(y)
             for path in paths:
@@ -90,7 +91,7 @@ class TestPaths():
                 total_distance = 0
                 current_position = self.current_position
                 for coord in path:
-                    total_distance += self._distance(current_position, coord)
+                    total_distance += local_abs(current_position[0] - coord[0]) + local_abs(current_position[1] - coord[1])
                     current_position = coord
                 total_distance += num_fruit_in_path
                 if not min_distance:
