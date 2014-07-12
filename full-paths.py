@@ -108,30 +108,14 @@ class Game():
             self.coord_list = coords_by_available
         trace(str(self.coord_list))
         
-    def path_permutations(self, generator, r=None):
-        """ given a set of unique coordinates, returns all possible permutations of those coordinates """
-        iterable = list(generator)
-        pool = tuple(iterable)
-        n = len(pool)
-        r = n if r is None else r
-        if r > n:
-            return
-        indices = range(n)
-        cycles = range(n, n-r, -1)
-        yield tuple(pool[i] for i in indices[:r])
-        while n:
-            for i in reversed(xrange(r)):
-                cycles[i] -= 1
-                if cycles[i] == 0:
-                    indices[i:] = indices[i+1:] + indices[i:i+1]
-                    cycles[i] = n - i
-                else:
-                    j = cycles[i]
-                    indices[i], indices[-j] = indices[-j], indices[i]
-                    yield tuple(pool[i] for i in indices[:r])
-                    break
-            else:
-                return
+    def path_permutations(self, elements):
+        if len(elements) <=1:
+            yield elements
+        else:
+            for perm in self.path_permutations(elements[1:]):
+                for i in range(len(elements)):
+                    # nb elements[0:1] works in both string and list contexts
+                    yield perm[:i] + elements[0:1] + perm[i:]
 
     def fruit_combinations(self, items, n):
         """ generator returns possible combinations for a list and num required"""
@@ -193,7 +177,7 @@ class Game():
         min_path = []
         local_abs = abs
         for y in self.unique_fruit_combinations(self.coord_list):
-            for path in self.path_permutations(y):
+            for path in self.path_permutations(list(y)):
                 num_fruit_in_path = len(path)
                 total_distance = self.path_distance(self.current_position, path)
                 total_distance += num_fruit_in_path

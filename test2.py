@@ -21,9 +21,9 @@ class TestPaths():
                     # nb elements[0:1] works in both string and list contexts
                     yield perm[:i] + elements[0:1] + perm[i:]
     
-    def path_permutations2(self, generator, r=None):
+    def path_permutations2(self, iterable, r=None):
         """ given a set of unique coordinates, returns all possible permutations of those coordinates """
-        iterable = list(generator)
+        #iterable = list(generator)
         pool = tuple(iterable)
         n = len(pool)
         r = n if r is None else r
@@ -123,10 +123,12 @@ class TestPaths():
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
+        num_paths = 0
         for y in self.unique_fruit_combinations(self.coord_list):
-            print 'y', y
+            #print 'y', y
             for path in self.path_permutations(list(y)):
-                print 'path', path
+                #print 'path', path
+                num_paths += 1
                 num_fruit_in_path = len(path)
                 total_distance = self.path_distance(self.current_position, path) + num_fruit_in_path
                 if not min_distance:
@@ -142,6 +144,7 @@ class TestPaths():
                         min_distance = total_distance
                         min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)
+        print 'number of paths', num_paths
         return min_path
         
     def calculate_dinner_location(self):
