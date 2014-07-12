@@ -3,7 +3,8 @@ import profile
 class TestPaths():
 
     def __init__(self):
-        self.coord_list = [(1.0, [(5, 3)]), (2.0, [(0, 2), (0, 6), (8, 0)]), (3.0, [(1, 5), (2, 0), (6, 4), (7, 0), (9, 6)])]
+        self.coord_list2 = [(1.0, [(5, 3)]), (2.0, [(0, 2), (0, 6), (8, 0)]), (3.0, [(1, 5), (2, 0), (6, 4), (7, 0), (9, 6)])]
+        self.coord_list = [(1, [(1, 0)]), (2, [(2, 1), (6, 9), (7, 9)]), (3, [(0, 7), (2, 7), (6, 2), (7, 7), (10, 5)]), (4, [(1, 10), (3, 6), (4, 0), (4, 9), (6, 4), (6, 6), (10, 1)]), (5, [(1, 4), (1, 8), (2, 4), (3, 5), (3, 10), (5, 5), (7, 2), (9, 2), (10, 9)])]
         self.current_position = (7, 6)
         self.width = 10
         self.height = 10
@@ -11,7 +12,16 @@ class TestPaths():
         self.calculate_dinner_location()
         print self.dinner_location
 
-    def path_permutations(self, generator, r=None):
+    def path_permutations(self, elements):
+        if len(elements) <=1:
+            yield elements
+        else:
+            for perm in self.path_permutations(elements[1:]):
+                for i in range(len(elements)):
+                    # nb elements[0:1] works in both string and list contexts
+                    yield perm[:i] + elements[0:1] + perm[i:]
+    
+    def path_permutations2(self, generator, r=None):
         """ given a set of unique coordinates, returns all possible permutations of those coordinates """
         iterable = list(generator)
         pool = tuple(iterable)
@@ -83,6 +93,17 @@ class TestPaths():
             pos = coord
         return total_distance
         
+    def distance(self, p0, p1):
+        """ no abs as slow, need to use if statements instead """
+        if p0[0] > p1[0]:
+            d = p0[0] - p1[0]
+        else:
+            d = p1[0] - p0[0]
+        if p0[1] > p1[1]:
+            return d + (p0[1] - p1[1])
+        else:
+            return d + (p1[1] - p0[1])
+    
     def path_distance(self, start, path):
         total_distance = 0
         pos = start
@@ -102,12 +123,12 @@ class TestPaths():
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
-        local_abs = abs
         for y in self.unique_fruit_combinations(self.coord_list):
-            for path in self.path_permutations(y):
+            print 'y', y
+            for path in self.path_permutations(list(y)):
+                print 'path', path
                 num_fruit_in_path = len(path)
-                total_distance = self.path_distance(self.current_position, path)
-                total_distance += num_fruit_in_path
+                total_distance = self.path_distance(self.current_position, path) + num_fruit_in_path
                 if not min_distance:
                     min_distance = total_distance
                     min_path = path
@@ -116,8 +137,8 @@ class TestPaths():
                     min_distance = total_distance
                     min_path = path
                 if total_distance == min_distance:
-                    if (local_abs(self.current_position[0] - path[0][0]) + local_abs(self.current_position[1] - path[0][1]) > 
-                            local_abs(self.current_position[0] - min_path[0][0]) + local_abs(self.current_position[1] - min_path[0][1])):
+                    if (self.distance(self.current_position, path[0]) > 
+                            self.distance(self.current_position, min_path[0])):
                         min_distance = total_distance
                         min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)

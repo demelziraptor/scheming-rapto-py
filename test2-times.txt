@@ -1,24 +1,24 @@
-0.008
-         1485 function calls (1398 primitive calls) in 0.008 seconds
+14
+         1409898 function calls (1354199 primitive calls) in 14.165 seconds
 
    Ordered by: standard name
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        3    0.000    0.000    0.000    0.000 :0(append)
-      185    0.000    0.000    0.000    0.000 :0(len)
-        6    0.000    0.000    0.000    0.000 :0(range)
+        5    0.000    0.000    0.000    0.000 :0(append)
+   469694    1.088    0.000    1.088    0.000 :0(len)
+    54276    0.140    0.000    0.140    0.000 :0(range)
         1    0.000    0.000    0.000    0.000 :0(setprofile)
-        1    0.000    0.000    0.008    0.008 <string>:1(<module>)
-        1    0.000    0.000    0.008    0.008 profile:0(TestPaths())
+        1    0.000    0.000   14.165   14.165 <string>:1(<module>)
+        1    0.000    0.000   14.165   14.165 profile:0(TestPaths())
         0    0.000             0.000          profile:0(profiler)
-        1    0.000    0.000    0.008    0.008 test2.py:101(different_paths)
-        1    0.000    0.000    0.008    0.008 test2.py:131(calculate_dinner_location)
-      153    0.008    0.000    0.008    0.000 test2.py:14(path_permutations)
-       15    0.000    0.000    0.000    0.000 test2.py:24(<genexpr>)
-      849    0.000    0.000    0.000    0.000 test2.py:34(<genexpr>)
-   102/21    0.000    0.000    0.000    0.000 test2.py:39(fruit_combinations)
-     12/6    0.000    0.000    0.000    0.000 test2.py:47(gen_unique_fruit_combinations)
-        1    0.000    0.000    0.008    0.008 test2.py:5(__init__)
-        4    0.000    0.000    0.000    0.000 test2.py:66(unique_fruit_combinations)
-      150    0.000    0.000    0.000    0.000 test2.py:86(path_distance)
+   414990    2.980    0.000    2.980    0.000 test2.py:107(path_distance)
+        1    7.965    7.965   14.165   14.165 test2.py:122(different_paths)
+        1    0.000    0.000   14.165   14.165 test2.py:147(calculate_dinner_location)
+469326/415000    1.992    0.000    2.256    0.000 test2.py:15(path_permutations)
+ 1544/191    0.000    0.000    0.000    0.000 test2.py:49(fruit_combinations)
+        1    0.000    0.000   14.165   14.165 test2.py:5(__init__)
+    40/20    0.000    0.000    0.000    0.000 test2.py:57(gen_unique_fruit_combinations)
+       11    0.000    0.000    0.000    0.000 test2.py:76(unique_fruit_combinations)
+        6    0.000    0.000    0.000    0.000 test2.py:96(distance)
+
 
