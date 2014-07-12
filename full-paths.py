@@ -77,8 +77,11 @@ class Game():
         """ returns number of fruit needed if can win that type, or 0 otherwise """
         have = get_my_item_count(fruit)
         needed = self.targets[fruit] - have
+        trace('have: ' + str(have) + ' needed ' + str(needed))
         if needed <= 0:
+            trace('reduce needed count')
             self.num_types_needed -= 1
+            trace('new count ' + str(self.num_types_needed))
         if needed > 0 and needed <= available:
             return int(round(needed))
         return 0
@@ -89,8 +92,10 @@ class Game():
         self.num_types_needed = self.num_types_to_win
         coords_by_type = {}
         coords_by_available = []
-        for x in range(self.width):
-            for y in range(self.height):
+        for x in xrange(self.width):
+            for y in xrange(self.height):
+                if self.opponent_position == (x,y):
+                    continue
                 name = self.board[x][y]
                 if name:
                     try:
@@ -102,8 +107,13 @@ class Game():
             needed = self.number_of_fruit_needed(fruit, len(coords))
             if needed:
                 need_something = True
-            self.coord_list.append((needed, coords))
+                self.coord_list.append((needed, coords))
             coords_by_available.append((len(coords), coords))
+        trace('number of types needed: ' + str(self.num_types_needed))
+        if not coords_by_available:
+            # opponent currently on last fruit, go anywhere
+            self.coord_list.append((1, (0,0)))
+            return
         if not need_something:
             self.coord_list = coords_by_available
         trace(str(self.coord_list))
@@ -170,7 +180,6 @@ class Game():
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
-        local_abs = abs
         local_len = len
         for y in self.unique_fruit_combinations(self.coord_list):
             for path in self.path_permutations(list(y)):
@@ -187,19 +196,20 @@ class Game():
                     else:
                         total_distance += coord[1] - pos[1]
                     pos = coord
+                trace('path: ' + str(path) + ' distance ' + str(total_distance))
                 if not min_distance:
                     min_distance = total_distance
                     min_path = path
-                else:
-                    if total_distance < min_distance:
+                    continue
+                if total_distance < min_distance:
+                    min_distance = total_distance
+                    min_path = path
+                if total_distance == min_distance:
+                    if (self.distance(self.current_position, path[0]) < 
+                        self.distance(self.current_position, min_path[0])):
                         min_distance = total_distance
                         min_path = path
-                    if total_distance == min_distance:
-                        if (self.distance(self.current_position, path[0]) > 
-                            self.distance(self.current_position, min_path[0])):
-                            min_distance = total_distance
-                            min_path = path
-        print 'let\'s go', str(min_path), 'distance', str(min_distance)
+        trace('let\'s go ' + str(min_path) + ' distance ' + str(min_distance))
         return min_path
         
     def calculate_dinner_location(self):

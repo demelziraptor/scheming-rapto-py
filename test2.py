@@ -83,18 +83,31 @@ class TestPaths():
             self.num_types_needed = num_fruit
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
             yield self.gen_unique_fruit_combinations(group_option).next()
+        
+    def distance(self, p0, p1):
+        """ no abs as slow, need to use if statements instead """
+        if p0[0] > p1[0]:
+            d = p0[0] - p1[0]
+        else:
+            d = p1[0] - p0[0]
+        if p0[1] > p1[1]:
+            return d + (p0[1] - p1[1])
+        else:
+            return d + (p1[1] - p0[1])
     
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
+        local_len = len
         num_paths = 0
+        num_same = 0
         for y in self.unique_fruit_combinations(self.coord_list):
             #print 'y', y
             for path in self.path_permutations(list(y)):
                 #print 'path', path
                 num_paths += 1
-                num_fruit_in_path = len(path)
+                num_fruit_in_path = local_len(path)
                 total_distance = num_fruit_in_path
                 pos = self.current_position
                 for coord in path:
@@ -115,12 +128,14 @@ class TestPaths():
                     min_distance = total_distance
                     min_path = path
                 if total_distance == min_distance:
-                    if (self.distance(self.current_position, path[0]) > 
+                    num_same += 1
+                    if (self.distance(self.current_position, path[0]) < 
                             self.distance(self.current_position, min_path[0])):
                         min_distance = total_distance
                         min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)
         print 'number of paths', num_paths
+        print 'number of paths with same distance', num_same
         return min_path
         
     def calculate_dinner_location(self):
