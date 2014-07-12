@@ -1,0 +1,22 @@
+5.2
+         994908 function calls (939209 primitive calls) in 5.256 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.000    0.000    0.000    0.000 :0(append)
+   469694    0.860    0.000    0.860    0.000 :0(len)
+    54276    0.120    0.000    0.120    0.000 :0(range)
+        1    0.000    0.000    0.000    0.000 :0(setprofile)
+        1    0.000    0.000    5.256    5.256 <string>:1(<module>)
+        1    0.000    0.000    5.256    5.256 profile:0(TestPaths())
+        0    0.000             0.000          profile:0(profiler)
+        1    2.804    2.804    5.256    5.256 test2.py:122(different_paths)
+469326/415000    1.464    0.000    1.680    0.000 test2.py:15(path_permutations)
+        1    0.000    0.000    5.256    5.256 test2.py:161(calculate_dinner_location)
+ 1544/191    0.004    0.000    0.004    0.000 test2.py:49(fruit_combinations)
+        1    0.000    0.000    5.256    5.256 test2.py:5(__init__)
+    40/20    0.000    0.000    0.000    0.000 test2.py:57(gen_unique_fruit_combinations)
+       11    0.004    0.000    0.008    0.001 test2.py:76(unique_fruit_combinations)
+        6    0.000    0.000    0.000    0.000 test2.py:96(distance)
+
