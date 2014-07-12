@@ -84,41 +84,6 @@ class TestPaths():
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
             yield self.gen_unique_fruit_combinations(group_option).next()
     
-    def path_distance2(self, start, path):
-        local_abs = abs
-        total_distance = 0
-        pos = start
-        for coord in path:
-            total_distance += local_abs(pos[0] - coord[0]) + local_abs(pos[1] - coord[1])
-            pos = coord
-        return total_distance
-        
-    def distance(self, p0, p1):
-        """ no abs as slow, need to use if statements instead """
-        if p0[0] > p1[0]:
-            d = p0[0] - p1[0]
-        else:
-            d = p1[0] - p0[0]
-        if p0[1] > p1[1]:
-            return d + (p0[1] - p1[1])
-        else:
-            return d + (p1[1] - p0[1])
-    
-    def path_distance(self, start, path):
-        total_distance = 0
-        pos = start
-        for coord in path:
-            if pos[0] > coord[0]:
-                total_distance += pos[0] - coord[0]
-            else:
-                total_distance += coord[0] - pos[0]
-            if pos[1] > coord[1]:
-                total_distance += pos[1] - coord[1]
-            else:
-                total_distance += coord[1] - pos[1]
-            pos = coord
-        return total_distance
-    
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
@@ -130,7 +95,18 @@ class TestPaths():
                 #print 'path', path
                 num_paths += 1
                 num_fruit_in_path = len(path)
-                total_distance = self.path_distance(self.current_position, path) + num_fruit_in_path
+                total_distance = num_fruit_in_path
+                pos = self.current_position
+                for coord in path:
+                    if pos[0] > coord[0]:
+                        total_distance += pos[0] - coord[0]
+                    else:
+                        total_distance += coord[0] - pos[0]
+                    if pos[1] > coord[1]:
+                        total_distance += pos[1] - coord[1]
+                    else:
+                        total_distance += coord[1] - pos[1]
+                    pos = coord
                 if not min_distance:
                     min_distance = total_distance
                     min_path = path

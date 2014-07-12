@@ -154,33 +154,39 @@ class Game():
             self.num_types_needed = num_fruit
         for group_option in self.fruit_combinations(fruit_list, self.num_types_needed):
             yield self.gen_unique_fruit_combinations(group_option).next()
-
-    def path_distance(self, start, path):
-        """ abs is slow, use if statements instead """
-        total_distance = 0
-        pos = start
-        for coord in path:
-            if pos[0] > coord[0]:
-                total_distance += pos[0] - coord[0]
-            else:
-                total_distance += coord[0] - pos[0]
-            if pos[1] > coord[1]:
-                total_distance += pos[1] - coord[1]
-            else:
-                total_distance += coord[1] - pos[1]
-            pos = coord
-        return total_distance
+    
+    def distance(self, p0, p1):
+        """ no abs as slow, need to use if statements instead """
+        if p0[0] > p1[0]:
+            d = p0[0] - p1[0]
+        else:
+            d = p1[0] - p0[0]
+        if p0[1] > p1[1]:
+            return d + (p0[1] - p1[1])
+        else:
+            return d + (p1[1] - p0[1])
     
     def different_paths(self):
         """ finds all possible paths and calculates minimum """
         min_distance = 0
         min_path = []
         local_abs = abs
+        local_len = len
         for y in self.unique_fruit_combinations(self.coord_list):
             for path in self.path_permutations(list(y)):
-                num_fruit_in_path = len(path)
-                total_distance = self.path_distance(self.current_position, path)
-                total_distance += num_fruit_in_path
+                num_fruit_in_path = local_len(path)
+                total_distance = num_fruit_in_path
+                pos = self.current_position
+                for coord in path:
+                    if pos[0] > coord[0]:
+                        total_distance += pos[0] - coord[0]
+                    else:
+                        total_distance += coord[0] - pos[0]
+                    if pos[1] > coord[1]:
+                        total_distance += pos[1] - coord[1]
+                    else:
+                        total_distance += coord[1] - pos[1]
+                    pos = coord
                 if not min_distance:
                     min_distance = total_distance
                     min_path = path
@@ -189,8 +195,8 @@ class Game():
                         min_distance = total_distance
                         min_path = path
                     if total_distance == min_distance:
-                        if (local_abs(self.current_position[0] - path[0][0]) + local_abs(self.current_position[1] - path[0][1]) > 
-                                local_abs(self.current_position[0] - min_path[0][0]) + local_abs(self.current_position[1] - min_path[0][1])):
+                        if (self.distance(self.current_position, path[0]) > 
+                            self.distance(self.current_position, min_path[0])):
                             min_distance = total_distance
                             min_path = path
         print 'let\'s go', str(min_path), 'distance', str(min_distance)
